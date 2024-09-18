@@ -22,8 +22,8 @@ mongoose
   .then(() => console.log("Database connected"))
   .catch((err) => console.log(err));
 
-app.post("/login", (req, res) => login);
+app.post("/login", (req, res) => login(req,res));
 
-app.post("/signup", (req, res) => signUp);
+app.post("/signup", (req, res) => signUp(req,res));
 
 app.listen(4000, () => console.log("Server is running on port 4000"));

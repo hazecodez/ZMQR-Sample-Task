@@ -1,7 +1,6 @@
 const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET;
 
 //email validation function
 function validateEmail(email) {
@@ -42,19 +41,24 @@ exports.signUp = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    if (!validateEmail(email))
+    if (!validateEmail(email)) {
       return res.json({ message: "Enter valid email" }).status(400);
-    if (password.length < 4)
-      return res.status(400).json({ message: "Password atlest 4 letter" });
+    }
+
+    if (password.length < 4) {
+      return res.status(400).json({ message: "Password atlest 4 letters" });
+    }
 
     const exist = await UserModel.findOne({ email });
     if (!exist) {
       return res.json({ message: "User not exist " }).status(400);
     }
     const comparedPass = await bcrypt.compare(password, exist.password);
-    if (!comparedPass)
+    if (!comparedPass) {
       return res.status(400).json({ message: "Incorrect password" });
+    }
 
+    const JWT_SECRET = process.env.JWT_SECRET;
     const token = jwt.sign({ userId: exist._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
